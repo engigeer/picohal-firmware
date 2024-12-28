@@ -1,18 +1,27 @@
-from peristaltic_pump import set_pump_callback
-from coolant_control import set_coolant_callback
+#from coolant_control import set_coolant_callback
+from IPG_control import set_IPG_callback
+from BLC_control import set_BLC_callback
+
 from event_handler import event_callback
-from spindle_control import set_spindle_callback
-from indicator_lights import set_status_callback
 
 from nuts_bolts import enum
 
 from machine import Pin
 
 slave_addr = 10             # address on bus as client
-modbus_baud = 115200
+modbus_baud = 19200
     
 def set_output_callback(reg_type, address, val):
     print('output pin update received')
+
+def set_status_callback(reg_type, address, val):
+    print('status pin update received')
+
+def set_spindle_callback(reg_type, address, val):
+    print('spindle update received')
+
+def set_coolant_callback(reg_type, address, val):
+    print('coolant pin update received')
 
 registers = {
     "HREGS": {
@@ -50,17 +59,17 @@ registers = {
             "val": 0,
             "on_set_cb": set_coolant_callback    
         },
-        "PUMP1_REGISTER": {
-            "register": 0x101,
+        "IPG_SOLENOIDS_REGISTER": {
+            "register": 0x110,
             "len": 1,
-            "val": 255,
-            "on_set_cb": set_pump_callback    
+            "val": 0,
+            "on_set_cb": set_IPG_callback    
         },
-        "PUMP2_REGISTER": {
-            "register": 0x102,
+        "BLC_SOLENOIDS_REGISTER": {
+            "register": 0x120,
             "len": 1,
-            "val": 255,
-            "on_set_cb": set_pump_callback    
+            "val": 0,
+            "on_set_cb": set_BLC_callback    
         },
         "SPINDLE_RUN_REGISTER": {
             "register": 0x200,
@@ -73,38 +82,7 @@ registers = {
             "len": 1,
             "val": 0,
             "on_set_cb": set_spindle_callback    
-        },        
-        "ACTIVE_SPINDLE_REGISTER": {
-            "register": 0x202,
-            "len": 1,
-            "val": 0,
-            "on_set_cb": set_spindle_callback    
-        },
-        "ACTIVE_SPINDLE_RPM_REGISTER": {
-            "register": 0x203,
-            "len": 1,
-            "val": 0,    
-        },
-        "ACTIVE_TOOL_REGISTER": {
-            "register": 0x300,
-            "len": 1,
-            "val": 0,    
-        },
-        "NEXT_TOOL_REGISTER": {
-            "register": 0x301,
-            "len": 1,
-            "val": 0,    
-        },
-        "ACTIVE_TOOL_POCKET": {
-            "register": 0x301,
-            "len": 1,
-            "val": 0,    
-        },
-        "NEXT_TOOL_POCKET": {
-            "register": 0x301,
-            "len": 1,
-            "val": 0,    
-        },         
+        }
     }    
 }
 

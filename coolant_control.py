@@ -1,20 +1,17 @@
 from machine import Pin
 
-#By default, use GPIOs 20 and 24 for coolant relay control as these allow XY step/dir when cnc shield is populated
-#Mist is on GPIO 7 (Relay 1) and Flood is on GPIO 4 (Relay 4).
-
-relay1_pin = 24
-#relay2_pin = 22
-#relay3_pin = 23
-relay4_pin = 20
+relay1_pin = 18 # (D4) MIST
+relay2_pin = 22 # (D7) FLOOD
+relay3_pin = 24 # (D8)
+relay4_pin = 19 # (D12)
 
 #only assign pins if they are defined.
 try :
     if(relay1_pin) :
-        mist = Pin(24, Pin.OUT)
+        mist = Pin(relay1_pin, Pin.OUT)
         mist.value(0)
-    if(relay4_pin) :
-        flood = Pin(20, Pin.OUT)
+    if(relay2_pin) :
+        flood = Pin(relay2_pin, Pin.OUT)
         flood.value(0)
 except NameError:
     mist=0
@@ -34,5 +31,3 @@ def set_coolant_callback(reg_type, address, val):
     global client
     global displayline1
     update_coolant_pins()
-    
-#update_coolant_pins()

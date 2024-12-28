@@ -7,7 +7,6 @@ tick_timer_period = 1000 # Hz
 systick = 0
 
 from modbus_registers import client
-import indicator_lights
 from event_handler import process_event
 
 screen_update_period = 10 # update screen every 250ms
@@ -22,13 +21,7 @@ led_update_counter = 0
 # Main Timer ISR
 def tick(timer):                # we will receive the timer object when being called
     global systick
-    global led
-    global screen_update_counter, led_update_counter
-        
-    led_update_counter = led_update_counter - 1
-    if led_update_counter < 0:
-        led_update_counter = 0
-        
+
     systick = systick + 1
         
 tim.init(freq=tick_timer_period, mode=Timer.PERIODIC, callback=tick)  # 50ms timer period
@@ -43,14 +36,9 @@ def modbus_thread():
 mb_thread = _thread.start_new_thread(modbus_thread, ())
 
 print('Deploying')
-indicator_lights.finish_flag()
 while True:
     time.sleep_ms(10)
     process_event()
-
-    if led_update_counter == 0:
-        indicator_lights.process_indicators()
-        led_update_counter = led_update_period
         
 
 

@@ -2,6 +2,7 @@ from machine import Timer
 import time
 import _thread
 import gc
+from wiznet import w5x00_init
 
 tick_timer_period = 1000 # Hz
 systick = 0
@@ -34,6 +35,9 @@ def modbus_thread():
         gc.collect()
         
 mb_thread = _thread.start_new_thread(modbus_thread, ())
+
+# init network comms
+w5x00_init()
 
 print('Deploying')
 while True:

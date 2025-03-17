@@ -1,7 +1,9 @@
 from machine import Pin
+from wiznet import sendcmd
 
 laser_ready_pin  = 18 # (D4)  LASER READY  (KEYSWITCH ON)
 laser_mains_pin  = 22 # (D7)  LASER MAINS  (POWERSUPPLY ACTIVE)
+laser_guide_on = False
 #laser_guide_pin  = 00 # (XX)  LASER GUIDE  (GUIDE ON)
 #laser_enable_pin = 00 # (XX)  LASER ENABLE (EMISSION ON!!)
 
@@ -26,7 +28,19 @@ def update_IPG_pins():
     if(laser_mains) :
         laser_mains.value(client.get_hreg(0x110) & 2)
 
+    # test aiming beam
+    laser_guide = (client.get_hreg(0x110) & 4)
+    if((laser_guide) and not (laser_guide_on)):
+        sendcmd("cmd=eeabc")
+    elif not (laser_guide) and (laser_guide_on):
+        sendcmd("cmd=deabc")
+
 def set_IPG_callback(reg_type, address, val):
     global client
     global displayline1
     update_IPG_pins()
+
+def set_spindle_callback(reg_type, address, val):
+    global client
+    global displayline1
+    print('spindle update received')

@@ -21,6 +21,7 @@ except NameError:
 
 def update_IPG_pins():
     from modbus_registers import client
+    global laser_guide_on
     #only update the pins if they were assigned.
     if(laser_ready) :
         laser_ready.value(client.get_hreg(0x110) & 1)
@@ -31,8 +32,12 @@ def update_IPG_pins():
     # test aiming beam
     laser_guide = (client.get_hreg(0x110) & 4)
     if((laser_guide) and not (laser_guide_on)):
+        print('enable guide laser')
+        laser_guide_on = True
         sendcmd("cmd=eeabc")
     elif not (laser_guide) and (laser_guide_on):
+        print('disable guide laser')
+        laser_guide_on = False
         sendcmd("cmd=deabc")
 
 def set_IPG_callback(reg_type, address, val):

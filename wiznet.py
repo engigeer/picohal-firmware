@@ -17,7 +17,7 @@ def w5x00_init():
     nic.active(True)
     # The only difference from the example linked above, using 
     # 'dhcp' instead of manually specifying the network info
-    #nic.ifconfig('dhcp')
+    # nic.ifconfig('dhcp')
     nic.ifconfig(('192.168.3.235','255.255.255.0','192.168.3.230','0.0.0.0'))
     while not nic.isconnected():
         time.sleep(1)

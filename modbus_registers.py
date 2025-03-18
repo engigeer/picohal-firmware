@@ -1,16 +1,12 @@
-#from coolant_control import set_coolant_callback
+from modbus_client import client
+
 from IPG_control import set_IPG_callback
 from BLC_control import set_BLC_callback
-
+from IPG_control import set_spindle_callback
 from event_handler import event_callback
 
 from nuts_bolts import enum
 
-from machine import Pin
-
-slave_addr = 10             # address on bus as client
-modbus_baud = 19200
-    
 def set_output_callback(reg_type, address, val):
     print('output pin update received')
 
@@ -86,16 +82,15 @@ registers = {
     }    
 }
 
+from machine import Pin   
 from umodbus.serial import ModbusRTU
-import os
-from umodbus import version
-import json
 
-import modbus_registers
-
-# the following definition is for a RP2
+slave_addr = 10             # address on bus as client
+modbus_baud = 19200
 rtu_pins = (Pin(8), Pin(9))     # (TX, RX)
 uart_id = 1
+
+#import modbus_registers
 
 client = ModbusRTU(
     addr=slave_addr,        # address on bus
@@ -109,7 +104,7 @@ client = ModbusRTU(
 )
 
 # define Modbus Registers here
-register_definitions = modbus_registers.registers
+#register_definitions = modbus_registers.registers
 
 print('Setting up registers ...')
 # use the defined values of each register type provided by register_definitions

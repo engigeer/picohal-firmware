@@ -37,7 +37,7 @@ def modbus_thread():
 mb_thread = _thread.start_new_thread(modbus_thread, ())
 
 # init network comms
-w5x00_init()
+#w5x00_init()
 
 print('Deploying')
 while True:

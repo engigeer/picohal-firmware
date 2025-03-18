@@ -2,7 +2,6 @@ from machine import Pin
 
 argon_sol_pin   = 24 # (D8)  ARGON GAS SOLENOID
 powder1_sol_pin = 19 # (D12) POWDER1 SOLENOID
-#powder1_rate_pin = 26 # (D12) POWDER1 FLOWRATE (NEED TO IMPLEMENT)
 
 #only assign pins if they are defined.
 try :
@@ -18,13 +17,16 @@ except NameError:
 
 def update_BLC_pins():
     from modbus_registers import client
+
+    BLC_reg = client.get_hreg(0x120)
+
     #only update the pins if they were assigned.
     if(argon) :
-        argon.value(client.get_hreg(0x120) & 1)
+        argon.value(BLC_reg & 1)
     if(powder1) :
-        powder1.value(client.get_hreg(0x120) & 2)
+        powder1.value((BLC_reg >> 1) & 1)
 
 def set_BLC_callback(reg_type, address, val):
     global client
-    global displayline1
+    print('BLC pins update recieved')
     update_BLC_pins()

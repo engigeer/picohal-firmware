@@ -6,12 +6,15 @@ import time
 import urequests
 
 led = Pin(8, Pin.OUT)
+networkup = False
 
 # TO-DO:
 # https://github.com/Wiznet/RP2040-HAT-MicroPython/blob/main/examples/HTTP/HTTP_Client/urequests.py
 
 #W5x00 chip init
 def w5x00_init():
+    global networkup
+
     spi=SPI(0,2_000_000, mosi=Pin(3),miso=Pin(0),sck=Pin(2))
     nic = network.WIZNET5K(spi,Pin(1),Pin(4)) #spi,cs,reset pin
     nic.active(True)
@@ -23,8 +26,14 @@ def w5x00_init():
         time.sleep(1)
         print(nic.regs())
     print(nic.ifconfig())
+    networkup = True
 
 def sendcmd(data):
+    global networkup
+
+    if not networkup:
+        print("Network is down, cannot send:", data)
+        return
 
     url = "http://192.168.3.230/setcmd"
     headers = {
@@ -45,25 +54,7 @@ def sendcmd(data):
         print("Error:", e)
         
 def main():
-    led.value(0)
-    time.sleep(0.5)
-    led.value(1)
-    time.sleep(0.5)
-    led.value(0)
-
-    while True:
-        led.value(0)
-        time.sleep(0.5)
-        led.value(1)
-        sendcmd("cmd=eeabc")
-        time.sleep(5)
-
-        led.value(0)
-        time.sleep(0.5)
-        led.value(1)
-        sendcmd("cmd=deabc")
-        time.sleep(5)
-
+    print('null main loop')
 
 if __name__ == "__main__":
     main()

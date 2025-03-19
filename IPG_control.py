@@ -4,10 +4,11 @@ from wiznet import sendcmd
 laser_ready_pin  = 18 # (D4)  LASER READY  (KEYSWITCH ON)
 laser_mains_pin  = 22 # (D7)  LASER MAINS  (POWERSUPPLY ACTIVE)
 # laser_guide_pin  = 21 # (D6)  LASER GUIDE  (GUIDE ON)
-# laser_enable_pin = 20 # (D5)  LASER ENABLE (EMISSION ON!!)
+# laser_shutter_pin = 20 # (D5)  LASER SHUTTER (EMISSION MAY BE ON!!)
 
 laser_guide_on = False
-laser_emmission_on = False
+laser_emission_on = False
+current_value = 0
 
 #only assign pins if they are defined.
 try :
@@ -20,14 +21,14 @@ try :
     # if(laser_guide_pin) :
     #     laser_guide = Pin(laser_guide_pin, Pin.OUT)
     #     laser_guide.value(0)
-    # if(laser_enable_pin) :
-    #     laser_enable = Pin(laser_enable_pin, Pin.OUT)
-    #     laser_enable.value(0)
+    # if(laser_shutter_pin) :
+    #     laser_shutter = Pin(laser_shutter_pin, Pin.OUT)
+    #     laser_shutter.value(0)
 except NameError:
     laser_ready=0
     laser_mains=0
     # laser_guide=0
-    # laser_enable=0
+    # laser_shutter=0
 
 def update_IPG_pins():
     from modbus_registers import client
@@ -45,8 +46,8 @@ def update_IPG_pins():
     # if(laser_guide) :
     #     laser_guide.value((IPG_reg >> 2) & 1)
 
-    # if(laser_enable) :
-    #     laser_enable.value((IPG_reg >> 3) & 1)
+    # if(laser_shutter) :
+    #     laser_shutter.value((IPG_reg >> 3) & 1)
 
     # Guide beam control
     laser_guide = ((IPG_reg >> 2) & 1)
@@ -64,12 +65,17 @@ def update_IPG_laser_power():
     from modbus_registers import client
 
     rpm_setpoint = client.get_hreg(0x201)  # RPM as unit16
-    laser_emission = client.get_hreg(0x200) & 1 # LASER ON bit
 
     # Send power setpoint
     rpm_limit = max(0, min(4000, int(rpm_setpoint)))
     current_value = rpm_limit // 40
     sendcmd(f"ver=1&scd={current_value}")
+
+def update_IPG_laser_state():
+    from modbus_registers import client
+    global laser_emission_on
+
+    laser_emission = client.get_hreg(0x200) & 1 # LASER ON bit
 
     # Set laser emission state
     if((laser_emission) and not (laser_emission_on)):
@@ -86,7 +92,12 @@ def set_IPG_callback(reg_type, address, val):
     print('IPG pins update recieved')
     update_IPG_pins()
 
-def set_spindle_callback(reg_type, address, val):
+def set_spindle_rpm_callback(reg_type, address, val):
     global client
-    print('Spindle state / rpm update received')
+    print('Spindle rpm update received')
     update_IPG_laser_power()
+
+def set_spindle_state_callback(reg_type, address, val):
+    global client
+    print('Spindle state update received')
+    update_IPG_laser_state()

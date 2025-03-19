@@ -1,14 +1,16 @@
 from machine import Pin
 from wiznet import sendcmd
+import time
 
 laser_ready_pin  = 18 # (D4)  LASER READY  (KEYSWITCH ON)
 laser_mains_pin  = 22 # (D7)  LASER MAINS  (POWERSUPPLY ACTIVE)
 # laser_guide_pin  = 21 # (D6)  LASER GUIDE  (GUIDE ON)
 # laser_shutter_pin = 20 # (D5)  LASER SHUTTER (EMISSION MAY BE ON!!)
+# laser_reset_pin = XX
 
 laser_guide_on = False
 laser_emission_on = False
-current_value = 0
+laser_power_value = 0
 
 #only assign pins if they are defined.
 try :
@@ -24,11 +26,15 @@ try :
     # if(laser_shutter_pin) :
     #     laser_shutter = Pin(laser_shutter_pin, Pin.OUT)
     #     laser_shutter.value(0)
+    # if(laser_reset_pin) :
+    #     laser_reset = Pin(laser_reset_pin, Pin.OUT)
+    #     laser_reset.value(0)
 except NameError:
     laser_ready=0
     laser_mains=0
     # laser_guide=0
     # laser_shutter=0
+    # laser_reset=0
 
 def update_IPG_pins():
     from modbus_registers import client
@@ -41,13 +47,18 @@ def update_IPG_pins():
         laser_ready.value(IPG_reg & 1)
     
     if(laser_mains) :
-        laser_mains.value((IPG_reg >> 1) & 1)
+        laser_mains.value((IPG_reg >> 1) & 1) # laser mains is momentary signal
+        time.sleep(0.05)
+        laser_mains.value(0)
 
     # if(laser_guide) :
     #     laser_guide.value((IPG_reg >> 2) & 1)
 
     # if(laser_shutter) :
     #     laser_shutter.value((IPG_reg >> 3) & 1)
+
+    # if(laser_reset) :
+    #     laser_reset.value((IPG_reg >> 4) & 1)
 
     # Guide beam control
     laser_guide = ((IPG_reg >> 2) & 1)
@@ -61,6 +72,14 @@ def update_IPG_pins():
         laser_guide_on = False
         sendcmd("cmd=abf")
 
+    # Reset laser errors
+    laser_reset = ((IPG_reg >> 4) & 1)
+           
+    if (laser_reset):
+        print('reset_laser_errors')
+        laser_guide_on = False
+        sendcmd("cmd=rerr")
+
 def update_IPG_laser_power():
     from modbus_registers import client
 
@@ -68,8 +87,8 @@ def update_IPG_laser_power():
 
     # Send power setpoint
     rpm_limit = max(0, min(4000, int(rpm_setpoint)))
-    current_value = rpm_limit // 40
-    sendcmd(f"ver=1&scd={current_value}")
+    laser_power_value = rpm_limit // 40
+    sendcmd(f"ver=1&scd={laser_power_value}")
 
 def update_IPG_laser_state():
     from modbus_registers import client

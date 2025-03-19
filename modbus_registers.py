@@ -65,6 +65,12 @@ registers = {
             "val": 0,
             "on_set_cb": set_BLC_callback    
         },
+        "BLC_RPM_REGISTER": {
+            "register": 0x121,
+            "len": 1,
+            "val": 0,
+            "on_set_cb": set_BLC_callback    
+        },
         "SPINDLE_RUN_REGISTER": {
             "register": 0x200,
             "len": 1,

@@ -1,6 +1,6 @@
-from IPG_control import set_IPG_callback
+from IPG_control import set_IPG_callback, set_spindle_state_callback, set_spindle_rpm_callback
 from BLC_control import set_BLC_callback
-from IPG_control import set_spindle_state_callback, set_spindle_rpm_callback
+from coolant_control import set_coolant_callback
 from event_handler import event_callback
 
 from nuts_bolts import enum
@@ -14,8 +14,8 @@ def set_status_callback(reg_type, address, val):
 # def set_spindle_callback(reg_type, address, val):
 #     print('spindle update received')
 
-def set_coolant_callback(reg_type, address, val):
-    print('coolant pin update received')
+#def set_coolant_callback(reg_type, address, val):
+#    print('coolant pin update received')
 
 registers = {
     "HREGS": {

@@ -55,4 +55,4 @@ def set_BLC_callback(reg_type, address, val):
     global client
     print('BLC pins update recieved')
     update_BLC_flowrate()
-    update_BLC_pins()
+    #update_BLC_pins()

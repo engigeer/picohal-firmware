@@ -16,7 +16,7 @@ try :
         powder1_state = Pin(powder1_sol_pin, Pin.OUT)
         powder1_state.value(0)
     if(powder1_pwm_pin) :
-        powder1_flow = PWM(Pin(powder1_pwm_pin), freq=5000, duty_u16=0) #maxValue 5V = 65536
+        powder1_flow = PWM(Pin(powder1_pwm_pin), freq=1000, duty_u16=0) #maxValue 5V = 65536
 except NameError:
     argon=0
     powder1=0
@@ -45,7 +45,7 @@ def update_BLC_flowrate():
 
     if powder1_flow and powder1_setpoint != prev_powder1_setpoint:
         print(powder1_setpoint)
-        powder1_flow.duty_u16(max(1000, min(65536, int(powder1_setpoint)*400))) # todo: proper rpm fitting for non-linear response
+        powder1_flow.duty_u16(max(1250, min(65536, int(powder1_setpoint)*500)-3750)) # todo: proper rpm fitting for non-linear response
 
     # Set powder setpoints
 

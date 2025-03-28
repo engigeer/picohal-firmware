@@ -88,7 +88,7 @@ def update_IPG_laser_power():
     # Send power setpoint
     rpm_limit = max(0, min(4000, int(rpm_setpoint)))
     laser_power_value = rpm_limit // 40
-    sendcmd(f"ver=1&scd={laser_power_value}")
+    sendcmd(f"ver=1&sdc={laser_power_value}")
 
 def update_IPG_laser_state():
     from modbus_registers import client

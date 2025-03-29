@@ -97,14 +97,20 @@ def update_IPG_laser_state():
     laser_emission = client.get_hreg(0x200) & 1 # LASER ON bit
 
     # Set laser emission state
-    if((laser_emission) and not (laser_emission_on)):
-        print('enable laser emmission')
-        laser_emission_on = True
-        sendcmd("cmd=emon") # Enable laser emission
-    elif not (laser_emission) and (laser_emission_on):
-        print('disable laser emission')
-        laser_emission_on = False
-        sendcmd("cmd=emoff") # Disable laser emission
+    if (laser_emission):
+        if not (laser_emission_on):
+            print('enable laser emmission')
+            laser_emission_on = True
+            sendcmd("cmd=emon") # Enable laser emission
+        else:
+            print('laser is already on')
+    else:
+        if (laser_emission_on):
+            print('disable laser emission')
+            laser_emission_on = False
+            sendcmd("cmd=emoff") # Disable laser emission
+        else:
+            print('laser is already off')
 
 def set_IPG_callback(reg_type, address, val):
     global client

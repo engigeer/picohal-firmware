@@ -43,10 +43,12 @@ def update_BLC_flowrate():
     powder1_setpoint = client.get_hreg(0x121) & 0xFF # RPM as unit16
     powder2_setpoint = client.get_hreg(0x121) >> 8   # RPM as unit16
 
-    if powder1_flow and powder1_setpoint != prev_powder1_setpoint:
-        print(powder1_setpoint)
-        powder1_flow.duty_u16(max(1250, min(65536, int(powder1_setpoint)*500)-3750)) # todo: proper rpm fitting for non-linear response
-
+    if powder1_flow:
+        if powder1_setpoint != prev_powder1_setpoint:
+            print(f'powderflow{powder1_setpoint}')
+            powder1_flow.duty_u16(max(1250, min(65536, int(powder1_setpoint)*500)-3750)) # todo: proper rpm fitting for non-linear response
+        else:
+            print('powder1flow is already at setpoint')
     # Set powder setpoints
 
 

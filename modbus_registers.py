@@ -11,6 +11,9 @@ def set_output_callback(reg_type, address, val):
 def set_status_callback(reg_type, address, val):
     print('status pin update received')
 
+def set_temp_callback(reg_type, address, val):
+    print('BLC solenoids update received')
+
 # def set_spindle_callback(reg_type, address, val):
 #     print('spindle update received')
 
@@ -63,7 +66,7 @@ registers = {
             "register": 0x120,
             "len": 1,
             "val": 0,
-            "on_set_cb": set_BLC_callback    
+            "on_set_cb": set_temp_callback    
         },
         "BLC_RPM_REGISTER": {
             "register": 0x121,

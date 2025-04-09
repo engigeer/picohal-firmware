@@ -46,7 +46,7 @@ def update_BLC_flowrate():
     if powder1_flow:
         if powder1_setpoint != prev_powder1_setpoint:
             print(f'powderflow{powder1_setpoint}')
-            powder1_flow.duty_u16(max(1250, min(65536, int(powder1_setpoint)*500)-3750)) # todo: proper rpm fitting for non-linear response
+            powder1_flow.duty_u16(max(1250, min(65536, int(powder1_setpoint)*500)-3000)) # todo: proper rpm fitting for non-linear response
         else:
             print('powder1flow is already at setpoint')
     # Set powder setpoints

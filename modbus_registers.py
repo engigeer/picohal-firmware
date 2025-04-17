@@ -1,18 +1,24 @@
 from IPG_control import set_IPG_callback, set_spindle_state_callback, set_spindle_rpm_callback
 from BLC_control import set_BLC_callback
+
+from outputs import set_output_callback
 from coolant_control import set_coolant_callback
 from event_handler import event_callback
 
 from nuts_bolts import enum
+import time
 
-def set_output_callback(reg_type, address, val):
-    print('output pin update received')
+# def set_output_callback(reg_type, address, val):
+#     print('output pin update received')
 
 def set_status_callback(reg_type, address, val):
     print('status pin update received')
 
 def set_temp_callback(reg_type, address, val):
     print('BLC solenoids update received')
+
+def set_keepalive_callback(reg_type, address, val):
+    timestamp = time.time()
 
 # def set_spindle_callback(reg_type, address, val):
 #     print('spindle update received')
@@ -50,29 +56,29 @@ registers = {
             "val": 0,
             "on_set_cb": event_callback    
         },          
-        "COOLANT_REGISTER": {
+        "KEEPALIVE_REGISTER": {
             "register": 0x100,
             "len": 1,
             "val": 0,
-            "on_set_cb": set_coolant_callback    
+            "on_set_cb": set_keepalive_callback    
         },
-        "IPG_SOLENOIDS_REGISTER": {
+        "DIGITAL_OUTPUT_REGISTER": {
             "register": 0x110,
             "len": 1,
             "val": 0,
-            "on_set_cb": set_IPG_callback    
+            "on_set_cb": set_output_callback    
         },
-        "BLC_SOLENOIDS_REGISTER": {
+        "ANALOG_OUTPUT_REGISTER_0": {
             "register": 0x120,
             "len": 1,
             "val": 0,
-            "on_set_cb": set_temp_callback    
+            "on_set_cb": set_output_callback    
         },
-        "BLC_RPM_REGISTER": {
+        "ANALOG_OUTPUT_REGISTER_1": {
             "register": 0x121,
             "len": 1,
             "val": 0,
-            "on_set_cb": set_BLC_callback    
+            "on_set_cb": set_output_callback    
         },
         "SPINDLE_RUN_REGISTER": {
             "register": 0x200,

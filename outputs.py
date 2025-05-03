@@ -1,8 +1,12 @@
 from machine import Pin
-relay1_pin   = 18 # (D4)  
-relay2_pin   = 22 # (D7)  
-relay3_pin   = 24 # (D8)  
-relay4_pin   = 19 # (D12) 
+relay1_pin   = 16  
+relay2_pin   = 17
+relay3_pin   = 20  
+relay4_pin   = 21
+relay5_pin   = 15  
+relay6_pin   = 10  
+relay7_pin   = 5  
+relay8_pin   = 23 
 
 analog1_setpoint = 0
 analog2_setpoint = 0
@@ -21,11 +25,27 @@ try :
     if(relay4_pin) :
         relay4 = Pin(relay4_pin, Pin.OUT)
         relay4.value(0)
+    if(relay5_pin) :
+        relay5 = Pin(relay5_pin, Pin.OUT)
+        relay5.value(0)
+    if(relay6_pin) :
+        relay6 = Pin(relay6_pin, Pin.OUT)
+        relay6.value(0)
+    if(relay7_pin) :
+        relay7 = Pin(relay7_pin, Pin.OUT)
+        relay7.value(0)
+    if(relay8_pin) :
+        relay8 = Pin(relay8_pin, Pin.OUT)
+        relay8.value(0)
 except NameError:
     relay1=0
     relay2=0
     relay3=0
     relay4=0
+    relay5=0
+    relay6=0
+    relay7=0
+    relay8=0
 
 def update_digital_outputs():
     from modbus_registers import client
@@ -41,7 +61,14 @@ def update_digital_outputs():
         relay3.value((dout_reg >> 2) & 1)
     if(relay4) :
         relay4.value((dout_reg >> 3) & 1)
-
+    if(relay5) :
+        relay5.value((dout_reg >> 4) & 1)
+    if(relay6) :
+        relay6.value((dout_reg >> 5) & 1)
+    if(relay7) :
+        relay7.value((dout_reg >> 6) & 1)
+    if(relay8) :
+        relay8.value((dout_reg >> 7) & 1)
 def update_analog_outputs():
     from modbus_registers import client
     global analog1_setpoint

@@ -1,5 +1,5 @@
 from machine import Pin
-relay1_pin   = 16  
+relay1_pin   = 18#16  
 relay2_pin   = 17
 relay3_pin   = 20  
 relay4_pin   = 21

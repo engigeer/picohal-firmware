@@ -1,5 +1,6 @@
 
 from outputs import set_output_callback
+from spindle_control import set_spindle_state_callback, set_spindle_rpm_callback
 from event_handler import event_callback
 
 from nuts_bolts import enum
@@ -17,8 +18,8 @@ def set_temp_callback(reg_type, address, val):
 def set_keepalive_callback(reg_type, address, val):
     timestamp = time.time()
 
-def set_spindle_callback(reg_type, address, val):
-    print('spindle update received')
+# def set_spindle_callback(reg_type, address, val):
+#     print('spindle update received')
 
 def set_coolant_callback(reg_type, address, val):
    print('coolant pin update received')
@@ -81,13 +82,13 @@ registers = {
             "register": 0x200,
             "len": 1,
             "val": 0,
-            "on_set_cb": set_spindle_callback    
+            "on_set_cb": set_spindle_state_callback    
         },
         "SPINDLE_SET_RPM_REGISTER": {
             "register": 0x201,
             "len": 1,
             "val": 0,
-            "on_set_cb": set_spindle_callback    
+            "on_set_cb": set_spindle_rpm_callback    
         }
     }    
 }

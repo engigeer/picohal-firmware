@@ -2,9 +2,12 @@
 from outputs import set_output_callback
 from spindle_control import set_spindle_state_callback, set_spindle_rpm_callback
 from event_handler import event_callback
+from machine import WDT
 
 from nuts_bolts import enum
 import time
+
+wdt = WDT(timeout=1500)
 
 # def set_output_callback(reg_type, address, val):
 #     print('output pin update received')
@@ -16,7 +19,9 @@ def set_temp_callback(reg_type, address, val):
     print('BLC solenoids update received')
 
 def set_keepalive_callback(reg_type, address, val):
-    timestamp = time.time()
+     global wdt
+#    timestamp = time.time()
+     wdt.feed()
 
 # def set_spindle_callback(reg_type, address, val):
 #     print('spindle update received')

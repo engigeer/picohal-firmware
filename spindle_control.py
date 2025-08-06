@@ -43,24 +43,14 @@ def update_laser_state():
         laser_on.value(SPINDLE_reg & 1)
         print(f'state:{SPINDLE_reg & 1}')
 
-# def linearize_power_output(rpm):
-#     linear_data = [
-#         {"slope": 8.463984e-01, "offset": -2.765132e+02, "rpm": 854.8},   # Segment 1
-#         {"slope": 8.383298e-01, "offset": -2.834102e+02, "rpm": 2047.6},  # Segment 2
-#         {"slope": 8.715443e-01, "offset": -2.847283e+02, "rpm": 3195.0},  # Segment 3
-#         {"slope": 8.715443e-01, "offset": -2.847283e+02, "rpm": 4210.5},   # Segment 4
-#     ]
+def linearize_power_output(rpm):
+    slope = 1.006571
+    offset = 501.7143
+    rpm_min = 800
 
-#     if not rpm > 0:
-#        return 0
+    power_out = (rpm-offset)/slope if rpm >= rpm_min else 0
     
-#     idx = len(linear_data)-1
-#     while idx > 0 and rpm < linear_data[idx]["rpm"]:
-#         idx -= 1
-
-#     power_out = max(0, min(4000, int(linear_data[idx]["slope"] * rpm - linear_data[idx]["offset"]))) // 40
-    
-#     return power_out
+    return power_out
 
 def update_laser_power():
     from modbus_registers import client
@@ -68,11 +58,12 @@ def update_laser_power():
 
     prev_rpm_setpoint = rpm_setpoint
 
-    rpm_setpoint = client.get_hreg(0x201)  # RPM as unit16
+    rpm_command = client.get_hreg(0x201)  # RPM as unit16
+    rpm_setpoint = linearize_power_output(rpm_command)
 
     if laser_power_pwm:
         if rpm_setpoint != prev_rpm_setpoint:
-            print(f'power:{rpm_setpoint}')
+            print(f'linearized power command:{rpm_setpoint}')
             laser_power_pwm.duty_u16(max(0, min(65536, int(rpm_setpoint)*8))) # todo: proper rpm fitting for non-linear response
         else:
             print('laser power is already at setpoint')

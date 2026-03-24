@@ -1,13 +1,12 @@
 from machine import Pin
-# AUX0 OUT CONTROLS SPINDLE ENABLE
-relay1_pin   = 17 #AUX1 OUT
-relay2_pin   = 20 #AUX2 OUT
-relay3_pin   = 21 #AUX3 OUT
-relay4_pin   = 15 #AUX4 OUT
-relay5_pin   = 10 #AUX5 OUT
-relay6_pin   = 5  #AUX6 OUT
-relay7_pin   = 23 #AUX7 OUT
-relay8_pin   = 18 #RLY OUT (ARDUINO RELAY SHIELD)
+relay1_pin   = 16 #AUX0 OUT
+relay2_pin   = 17 #AUX1 OUT
+relay3_pin   = 18 #AUX2 OUT
+relay4_pin   = 20 #AUX3 OUT
+relay5_pin   = 21 #AUX4 OUT
+relay6_pin   = 22 #AUX5 OUT
+relay7_pin   = 19 #AUX6 OUT
+relay8_pin   = 23 #AUX7 OUT
 
 analog1_setpoint = 0
 analog2_setpoint = 0

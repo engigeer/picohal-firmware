@@ -1,4 +1,6 @@
 from machine import Pin
+from wiznet import sendcmd
+
 relay1_pin   = 16 #AUX0 OUT
 relay2_pin   = 17 #AUX1 OUT
 relay3_pin   = 18 #AUX2 OUT
@@ -10,6 +12,13 @@ relay8_pin   = 23 #AUX7 OUT
 
 analog1_setpoint = 0
 analog2_setpoint = 0
+
+laser_mains = False
+laser_guide = False
+laser_reset = False
+
+laser_guide_on = False
+laser_emission_on = False
 
 #only assign pins if they are defined.
 try :
@@ -50,25 +59,37 @@ except NameError:
 def update_digital_outputs():
     from modbus_registers import client
 
+    global laser_mains
+    global laser_guide
+    global laser_reset
+
     dout_reg = client.get_hreg(0x110)
 
     #only update the pins if they were assigned.
     if(relay1) :
-        relay1.value(dout_reg & 1)
+        laser_mains = (dout_reg & 1)
+        relay1.value(laser_mains)
     if(relay2) :
-        relay2.value((dout_reg >> 1) & 1)
+        laser_guide = (dout_reg >> 1) & 1
+        relay2.value(laser_guide)
     if(relay3) :
-        relay3.value((dout_reg >> 2) & 1)
+        laser_reset = (dout_reg >> 2) & 1
+        relay3.value(laser_reset)
     if(relay4) :
-        relay4.value((dout_reg >> 3) & 1)
+        laser_spare0 = (dout_reg >> 3) & 1
+        relay4.value(laser_spare0)
     if(relay5) :
-        relay5.value((dout_reg >> 4) & 1)
+        laser_spare1 = (dout_reg >> 4) & 1
+        relay5.value(laser_spare1)
     if(relay6) :
         relay6.value((dout_reg >> 5) & 1)
     if(relay7) :
         relay7.value((dout_reg >> 6) & 1)
     if(relay8) :
         relay8.value((dout_reg >> 7) & 1)
+
+    update_IPG_pins()
+
 def update_analog_outputs():
     from modbus_registers import client
     global analog1_setpoint
@@ -91,3 +112,24 @@ def set_output_callback(reg_type, address, val):
     print('output pins update recieved')
     update_digital_outputs()
     update_analog_outputs()
+
+def update_IPG_pins():
+
+    global laser_guide_on
+    global laser_mains
+    global laser_guide
+    global laser_reset
+    
+    if((laser_guide) and not (laser_guide_on)):
+        print('enable guide laser')
+        laser_guide_on = True
+        sendcmd("cmd=abn")
+    elif not (laser_guide) and (laser_guide_on):
+        print('disable guide laser')
+        laser_guide_on = False
+        sendcmd("cmd=abf")
+
+    if (laser_reset):
+        print('reset_laser_errors')
+        laser_guide_on = False
+        sendcmd("cmd=rerr")

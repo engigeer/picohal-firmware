@@ -9,24 +9,16 @@ import time
 
 #print('initializing watchdog in 2s, interrupt code now to cancel')
 #time.sleep(2)
-#wdt = WDT(timeout=3000)
-
-# def set_output_callback(reg_type, address, val):
-#     print('output pin update received')
+#wdt = WDT(timeout=1500)
 
 def set_status_callback(reg_type, address, val):
     print('status pin update received')
-
-def set_temp_callback(reg_type, address, val):
-    print('BLC solenoids update received')
 
 def set_keepalive_callback(reg_type, address, val):
      global wdt
 #    timestamp = time.time()
 #     wdt.feed()
 
-# def set_spindle_callback(reg_type, address, val):
-#     print('spindle update received')
 
 def set_coolant_callback(reg_type, address, val):
    print('coolant pin update received')

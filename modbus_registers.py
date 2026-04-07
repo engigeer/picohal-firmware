@@ -7,17 +7,17 @@ from machine import WDT
 from nuts_bolts import enum
 import time
 
-#print('initializing watchdog in 2s, interrupt code now to cancel')
-#time.sleep(2)
-#wdt = WDT(timeout=1500)
+print('initializing watchdog in 2s, interrupt code now to cancel')
+time.sleep(2)
+wdt = WDT(timeout=3000)
 
 def set_status_callback(reg_type, address, val):
     print('status pin update received')
 
 def set_keepalive_callback(reg_type, address, val):
-     global wdt
-#    timestamp = time.time()
-#     wdt.feed()
+    global wdt
+    timestamp = time.time()
+    wdt.feed()
 
 
 def set_coolant_callback(reg_type, address, val):

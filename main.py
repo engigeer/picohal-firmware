@@ -40,9 +40,9 @@ mb_thread = _thread.start_new_thread(modbus_thread, ())
 w5x00_init()
 
 print('Deploying')
-# while True:
-#     time.sleep_ms(10)
-#     process_event()
+while True:
+    time.sleep_ms(10)
+    process_event()
         
 
 

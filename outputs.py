@@ -13,6 +13,7 @@ relay8_pin   = 23 #AUX7 OUT
 analog1_setpoint = 0
 analog2_setpoint = 0
 
+laser_remotekey = False
 laser_mains = False
 laser_guide = False
 laser_reset = False
@@ -59,6 +60,7 @@ except NameError:
 def update_digital_outputs():
     from modbus_registers import client
 
+    global laser_remotekey
     global laser_mains
     global laser_guide
     global laser_reset
@@ -67,20 +69,19 @@ def update_digital_outputs():
 
     #only update the pins if they were assigned.
     if(relay1) :
-        laser_mains = (dout_reg & 1)
-        relay1.value(laser_mains)
+        laser_remotekey = (dout_reg & 1)
+        relay1.value(laser_remotekey)
     if(relay2) :
-        laser_guide = (dout_reg >> 1) & 1
-        relay2.value(laser_guide)
+        laser_mains = (dout_reg >> 1) & 1
+        relay2.value(laser_mains)
     if(relay3) :
-        laser_reset = (dout_reg >> 2) & 1
-        relay3.value(laser_reset)
+        laser_guide = (dout_reg >> 2) & 1
+        relay3.value(laser_guide)
     if(relay4) :
-        laser_spare0 = (dout_reg >> 3) & 1
-        relay4.value(laser_spare0)
+        laser_reset = (dout_reg >> 3) & 1
+        relay4.value(laser_reset)
     if(relay5) :
-        laser_spare1 = (dout_reg >> 4) & 1
-        relay5.value(laser_spare1)
+        relay5.value((dout_reg >> 4) & 1)
     if(relay6) :
         relay6.value((dout_reg >> 5) & 1)
     if(relay7) :
@@ -115,16 +116,16 @@ def set_output_callback(reg_type, address, val):
 
 def update_IPG_pins():
 
-    global laser_guide_on
-    global laser_mains
     global laser_guide
     global laser_reset
+
+    global laser_guide_on
     
     if((laser_guide) and not (laser_guide_on)):
         print('enable guide laser')
         laser_guide_on = True
         sendcmd("cmd=abn")
-    elif not (laser_guide) and (laser_guide_on):
+    elif (not (laser_guide) and (laser_guide_on)):
         print('disable guide laser')
         laser_guide_on = False
         sendcmd("cmd=abf")

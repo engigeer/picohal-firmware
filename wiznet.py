@@ -46,7 +46,7 @@ def sendcmd(data):
     #data = "cmd=eeabc" # enable aiming beam control?
 
     try:
-        response = urequests.post(url, headers=headers, data=data, timeout=2)
+        response = urequests.post(url, headers=headers, data=data, timeout=1)
         print("Status code:", response.status_code)
         print("Response text:", response.text)
         response.close()

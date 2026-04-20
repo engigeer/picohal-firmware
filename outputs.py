@@ -69,23 +69,23 @@ def update_digital_outputs():
 
     #only update the pins if they were assigned.
     if(relay1) :
-        laser_remotekey = (dout_reg & 1)
-        relay1.value(laser_remotekey)
+        relay1.value((dout_reg) & 1)
     if(relay2) :
-        laser_mains = (dout_reg >> 1) & 1
-        relay2.value(laser_mains)
+        relay2.value((dout_reg >> 1) & 1)
     if(relay3) :
-        laser_guide = (dout_reg >> 2) & 1
-        relay3.value(laser_guide)
+        relay3.value((dout_reg >> 2) & 1)   
     if(relay4) :
-        laser_reset = (dout_reg >> 3) & 1
-        relay4.value(laser_reset)
+        laser_remotekey = (dout_reg >> 3) & 1
+        relay4.value(laser_remotekey)
     if(relay5) :
-        relay5.value((dout_reg >> 4) & 1)
+        laser_mains = (dout_reg >> 4) & 1
+        relay5.value(laser_mains)
     if(relay6) :
-        relay6.value((dout_reg >> 5) & 1)
+        laser_guide = (dout_reg >> 5) & 1
+        relay6.value(laser_guide)
     if(relay7) :
-        relay7.value((dout_reg >> 6) & 1)
+        laser_reset = (dout_reg >> 6) & 1
+        relay7.value(laser_reset)
     if(relay8) :
         relay8.value((dout_reg >> 7) & 1)
 

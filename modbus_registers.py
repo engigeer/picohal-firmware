@@ -1,58 +1,35 @@
-
-from outputs import set_output_callback
-from spindle_control import set_spindle_state_callback, set_spindle_rpm_callback
-from event_handler import event_callback
-from machine import WDT
-
-from nuts_bolts import enum
+from machine import Pin
+from umodbus.serial import ModbusRTU
+import state
 import time
 
-print('initializing watchdog in 2s, interrupt code now to cancel')
-time.sleep(2)
-wdt = WDT(timeout=3000)
+# =========================================================
+# CONFIGURATION
+# =========================================================
 
-def set_status_callback(reg_type, address, val):
-    print('status pin update received')
+slave_addr = 10
+modbus_baud = 19200
+rtu_pins = (Pin(8), Pin(9))
+uart_id = 1
+
+# =========================================================
+# CALLBACKS (MUST BE FAST, NO I/O)
+# =========================================================
+
+def set_spindle_rpm_callback(reg_type, address, val):
+    state.pending_power_update = True
+
+def set_spindle_state_callback(reg_type, address, val):
+    state.pending_laser_update = True
+
+def set_output_callback(reg_type, address, val):
+    state.pending_output_update = True
 
 def set_keepalive_callback(reg_type, address, val):
-    global wdt
-    timestamp = time.time()
-    wdt.feed()
-
-
-def set_coolant_callback(reg_type, address, val):
-   print('coolant pin update received')
+    state.last_keepalive = time.ticks_ms()
 
 registers = {
-    "HREGS": {
-        "STATUS_REGISTER": {
-            "register": 0x01,
-            "len": 1,
-            "val": 255,
-            "on_set_cb": set_status_callback    
-        },
-        "ALARM_REGISTER": {
-            "register": 0x02,
-            "len": 1,
-            "val": 0,   
-        },         
-        "INPUT_REGISTER": {
-            "register": 0x03,
-            "len": 1,
-            "val": 255,    
-        },
-        "OUTPUT_REGISTER": {
-            "register": 0x04,
-            "len": 1,
-            "val": 0,
-            "on_set_cb": set_output_callback    
-        },
-        "EVENT_REGISTER": {
-            "register": 0x05,
-            "len": 1,
-            "val": 0,
-            "on_set_cb": event_callback    
-        },          
+    "HREGS": {    
         "KEEPALIVE_REGISTER": {
             "register": 0x100,
             "len": 1,
@@ -92,15 +69,9 @@ registers = {
     }    
 }
 
-from machine import Pin   
-from umodbus.serial import ModbusRTU
-
-slave_addr = 10             # address on bus as client
-modbus_baud = 19200
-rtu_pins = (Pin(8), Pin(9))     # (TX, RX)
-uart_id = 1
-
-#import modbus_registers
+# =========================================================
+# MODBUS CLIENT INIT
+# =========================================================
 
 client = ModbusRTU(
     addr=slave_addr,        # address on bus
@@ -113,13 +84,16 @@ client = ModbusRTU(
     uart_id=uart_id         # optional, default 1, see port specific documentation
 )
 
-# define Modbus Registers here
-#register_definitions = modbus_registers.registers
+# =========================================================
+# SETUP
+# =========================================================
 
-print('Setting up registers ...')
-# use the defined values of each register type provided by register_definitions
+print("Setting up registers ...")
 client.setup_registers(registers)
-print('Register setup done')
 
-print('Serving as RTU client on address {} at {} baud'.
-      format(slave_addr, modbus_baud))
+print("Register setup done")
+
+print(
+    "Serving as RTU client on address {} at {} baud"
+    .format(slave_addr, modbus_baud)
+)

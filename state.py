@@ -19,6 +19,12 @@ pending_power_update = False
 pending_output_update = False
 
 # =========================================================
+# DEBUG / WATCHDOG
+# =========================================================
+
+debug_mode = True  # Set to True via REPL to disable watchdog
+
+# =========================================================
 # SYSTEM STATE
 # =========================================================
 

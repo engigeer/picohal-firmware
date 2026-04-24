@@ -6,7 +6,7 @@ def update_laser_state():
     # Set laser emission state
     if (state.laser_emission):
         if not (state.laser_emission_on):
-            print('enable laser emmission')
+            print('enable laser emission')
             state.laser_emission_on = True
 
             with state.queue_lock:

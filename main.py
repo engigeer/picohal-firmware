@@ -87,7 +87,7 @@ while True:
     # ----------------------------
     # WATCHDOG
     # ----------------------------
-    if time.ticks_diff(time.ticks_ms(), state.last_keepalive) < 1000:
+    if state.debug_mode or time.ticks_diff(time.ticks_ms(), state.last_keepalive) < 1000:
         wdt.feed()
 
     # ----------------------------

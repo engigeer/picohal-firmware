@@ -1,7 +1,6 @@
 from machine import Pin
 from umodbus.serial import ModbusRTU
 import state
-import time
 
 # =========================================================
 # CONFIGURATION
@@ -26,7 +25,7 @@ def set_output_callback(reg_type, address, val):
     state.pending_output_update = True
 
 def set_keepalive_callback(reg_type, address, val):
-    state.last_keepalive = time.ticks_ms()
+    state.keepalive_update = True
 
 registers = {
     "HREGS": {    

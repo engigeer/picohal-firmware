@@ -12,6 +12,12 @@ from spindle_control import update_laser_power, update_laser_state
 import state
 
 # =========================================================
+# NETWORK INIT (CORE 1 DEPENDENCY)
+# =========================================================
+
+w5x00_init()
+
+# =========================================================
 # WATCHDOG
 # =========================================================
 
@@ -19,12 +25,6 @@ print("Watchdog starting in 2s...")
 time.sleep(2)
 
 wdt = WDT(timeout=3000)
-
-# =========================================================
-# NETWORK INIT (CORE 1 DEPENDENCY)
-# =========================================================
-
-w5x00_init()
 
 # =========================================================
 # NETWORK CORE (CORE 1)
@@ -56,8 +56,6 @@ _thread.start_new_thread(network_core, ())
 
 print("System deploying...")
 
-last_tick = time.ticks_ms()
-
 while True:
 
     # ----------------------------
@@ -80,25 +78,15 @@ while True:
         state.pending_laser_update = False
 
     if state.pending_power_update:
-        state.laser_power_value = client.get_hreg(0x201)
+        state.rpm_command = client.get_hreg(0x201)
         update_laser_power()
         state.pending_power_update = False
 
     # ----------------------------
     # WATCHDOG
     # ----------------------------
-    if state.debug_mode or time.ticks_diff(time.ticks_ms(), state.last_keepalive) < 1000:
+    if state.debug_mode or state.keepalive_update:
         wdt.feed()
-
-    # ----------------------------
-    # OPTIONAL JITTER MONITOR
-    # ----------------------------
-    now = time.ticks_ms()
-    delta = time.ticks_diff(now, last_tick)
-    last_tick = now
-
-    if delta > 5:
-        print("modbus jitter:", delta)
 
     # ----------------------------
     # LIGHT IDLE

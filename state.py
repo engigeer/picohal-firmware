@@ -22,7 +22,7 @@ pending_output_update = False
 # DEBUG / WATCHDOG
 # =========================================================
 
-debug_mode = True  # Set to True via REPL to disable watchdog
+debug_mode = False  # Set to True via REPL to disable watchdog
 
 # =========================================================
 # SYSTEM STATE
@@ -32,7 +32,7 @@ laser_emission_on = False
 laser_guide_on = False
 laser_power_value = 0
 
-last_keepalive = 0
+keepalive_update = False
 
 #
 outputs = 0

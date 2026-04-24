@@ -20,7 +20,7 @@ def update_laser_state():
             
             with state.queue_lock:
                 state.network_queue.append("cmd=emoff") # Disable laser emission
-                state.network_queue.append("ver=1&sdc=0") # Set power to zero
+                #state.network_queue.append("ver=1&sdc=0") # Set power to zero
         else:
             print('laser is already off')
 
@@ -47,5 +47,6 @@ def update_laser_power():
 
     # Send power setpoint
     state.laser_power_value = linearize_power_output(state.rpm_command)
+    print(f"laser power ={state.laser_power_value}%")
     with state.queue_lock:
         state.network_queue.append(f"ver=1&sdc={state.laser_power_value}")

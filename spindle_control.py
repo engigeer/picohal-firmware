@@ -1,5 +1,8 @@
 from modbus_registers import client
+from machine import Pin
 import state
+
+modulate = Pin(25, Pin.OUT); modulate.value(0) #modulate signal
 
 def update_laser_state():
 
@@ -14,11 +17,12 @@ def update_laser_state():
         else:
             print('laser is already on')
     else:
-        if (state.laser_emission_on):
+        if (1):#state.laser_emission_on):
             print('disable laser emission')
             state.laser_emission_on = False
             
             with state.queue_lock:
+                modulate.value(0)
                 state.network_queue.append("cmd=emoff") # Disable laser emission
                 #state.network_queue.append("ver=1&sdc=0") # Set power to zero
         else:
@@ -45,8 +49,20 @@ def linearize_power_output(rpm):
 
 def update_laser_power():
 
+    if state.laser_emission_on and state.rpm_command == 0:
+        modulate.value(0)
+        print(f"laser off by modulation")
+        return
+    
+    if state.laser_emission_on and state.rpm_command > 0:
+        modulate.value(1)
+        print(f"laser on by modulation")
+
+    prev_power = state.laser_power_value
+
     # Send power setpoint
     state.laser_power_value = linearize_power_output(state.rpm_command)
-    print(f"laser power ={state.laser_power_value}%")
-    with state.queue_lock:
-        state.network_queue.append(f"ver=1&sdc={state.laser_power_value}")
+    if state.laser_power_value != prev_power:
+        print(f"laser power ={state.laser_power_value}%")
+        with state.queue_lock:
+            state.network_queue.append(f"ver=1&sdc={state.laser_power_value}")

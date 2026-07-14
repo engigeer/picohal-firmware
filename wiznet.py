@@ -48,7 +48,7 @@ def sendcmd(data):
 
     try:
         response = urequests.post(url, headers=headers, data=data, timeout=2)
-        print("HTTP:", response.status_code)
+        #print("HTTP:", response.status_code)
         response.close()
 
     except Exception as e:

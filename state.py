@@ -30,7 +30,7 @@ debug_mode = False  # Set to True via REPL to disable watchdog
 
 laser_emission_on = False
 laser_guide_on = False
-laser_power_value = 0
+power_setpoint = 0
 
 keepalive_update = False
 
@@ -39,6 +39,7 @@ outputs = 0
 analog1_setpoint = 0
 analog2_setpoint = 0
 rpm_command = 0
+laser_power_command = 0
 
 laser_reset = False
 laser_mains = False

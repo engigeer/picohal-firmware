@@ -18,7 +18,7 @@ def update_digital_outputs():
     r3.value((state.outputs >> 2) & 1)   
     r8.value((state.outputs >> 7) & 1)
 
-    state.laser_remotekey = (state.outputs >> 3) & 1
+    #state.laser_remotekey = (state.outputs >> 3) & 1
     r4.value(state.laser_remotekey)
 
     state.laser_mains = (state.outputs >> 4) & 1

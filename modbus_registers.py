@@ -26,6 +26,7 @@ def set_output_callback(reg_type, address, val):
 
 def set_keepalive_callback(reg_type, address, val):
     state.keepalive_update = True
+    state.laser_remotekey = True
 
 registers = {
     "HREGS": {    

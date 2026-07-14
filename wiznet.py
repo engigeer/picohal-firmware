@@ -18,7 +18,7 @@ def w5x00_init():
 
     nic.ifconfig(('192.168.3.235','255.255.255.0','192.168.3.230','0.0.0.0'))
     
-    timeout = 10
+    timeout = 5
     start = time.time()
 
     while not nic.isconnected():

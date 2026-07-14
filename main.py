@@ -24,7 +24,7 @@ w5x00_init()
 print("Watchdog starting in 2s...")
 time.sleep(2)
 
-wdt = WDT(timeout=3000)
+wdt = WDT(timeout=2100)
 
 # =========================================================
 # NETWORK CORE (CORE 1)
@@ -87,6 +87,7 @@ while True:
     # ----------------------------
     if state.debug_mode or state.keepalive_update:
         wdt.feed()
+        state.keepalive_update = False
 
     # ----------------------------
     # LIGHT IDLE
